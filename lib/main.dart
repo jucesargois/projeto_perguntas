@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_perguntas/questao.dart';
+import 'package:projeto_perguntas/resposta.dart';
 
 main() {
   runApp(
@@ -9,20 +10,41 @@ main() {
 
 class _PerguntaAppState extends State<PerguntaApp> {
   var perguntaSelecionada = 0;
+  final List<Map<String, Object>> _perguntas = const [
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'respostas': ['Preto', 'Vermelho', 'Verde', 'Branco'],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito?',
+      'respostas': ['Coelho', 'Cobra', 'Elefante', 'Leão'],
+    },
+    {
+      'texto': 'Qual é o seu instrutor favorito?',
+      'respostas': ['Maria', 'João', 'Leo', 'Pedro'],
+    }
+  ];
   void responder() {
-    setState(() {
-      perguntaSelecionada++;
-    });
+    if (temPerguntaSelecionada) {
+      setState(() {
+        perguntaSelecionada++;
+      });
+    }
+  }
 
-    print(perguntaSelecionada);
+  bool get temPerguntaSelecionada {
+    return perguntaSelecionada < _perguntas.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> perguntas = [
-      'Qual é a sua cor favorita?',
-      'Qual é o seu animal favorito?',
-    ];
+    List<String> respostas = temPerguntaSelecionada
+        ? _perguntas[perguntaSelecionada].cast()['respostas']
+        : [];
+
+    //for (var textoResp in respostas) {
+    // widgets.add(Resposta(textoResp, responder));
+    //}
 
     return MaterialApp(
       home: Scaffold(
@@ -31,23 +53,19 @@ class _PerguntaAppState extends State<PerguntaApp> {
             child: Text('Perguntas'),
           ),
         ),
-        body: Column(
-          children: [
-            Questao(perguntas[perguntaSelecionada]),
-            ElevatedButton(
-              onPressed: responder,
-              child:const Text('Resposta 1'),
-            ),
-            ElevatedButton(
-              onPressed: responder,
-              child: const Text('Resposta 2'),
-            ),
-            ElevatedButton(
-              onPressed: responder,
-              child: const Text('Resposta 3'),
-            ),
-          ],
-        ),
+        body: temPerguntaSelecionada
+            ? Column(
+                children: [
+                  Questao(_perguntas[perguntaSelecionada]['texto'].toString()),
+                  ...respostas.map((t) => Resposta(t, responder)).toList(),
+                ],
+              )
+            : const Center(
+                child: Text(
+                  'Parabéns!',
+                  style: TextStyle(fontSize: 28),
+                ),
+              ),
       ),
     );
   }
