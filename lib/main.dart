@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_perguntas/questao.dart';
-import 'package:projeto_perguntas/resposta.dart';
+import 'package:projeto_perguntas/questionario.dart';
+import 'package:projeto_perguntas/resultado.dart';
+
+
 
 main() {
   runApp(
@@ -9,7 +11,7 @@ main() {
 }
 
 class _PerguntaAppState extends State<PerguntaApp> {
-  var perguntaSelecionada = 0;
+  var _perguntaSelecionada = 0;
   final List<Map<String, Object>> _perguntas = const [
     {
       'texto': 'Qual é a sua cor favorita?',
@@ -24,23 +26,25 @@ class _PerguntaAppState extends State<PerguntaApp> {
       'respostas': ['Maria', 'João', 'Leo', 'Pedro'],
     }
   ];
-  void responder() {
+  void _responder() {
     if (temPerguntaSelecionada) {
-      setState(() {
-        perguntaSelecionada++;
-      });
+      setState(
+        () {
+          _perguntaSelecionada++;
+        },
+      );
     }
   }
 
-  bool get temPerguntaSelecionada {
-    return perguntaSelecionada < _perguntas.length;
+ 
+ bool get temPerguntaSelecionada {
+    return _perguntaSelecionada < _perguntas.length;
   }
+
 
   @override
   Widget build(BuildContext context) {
-    List<String> respostas = temPerguntaSelecionada
-        ? _perguntas[perguntaSelecionada].cast()['respostas']
-        : [];
+   
 
     //for (var textoResp in respostas) {
     // widgets.add(Resposta(textoResp, responder));
@@ -54,18 +58,8 @@ class _PerguntaAppState extends State<PerguntaApp> {
           ),
         ),
         body: temPerguntaSelecionada
-            ? Column(
-                children: [
-                  Questao(_perguntas[perguntaSelecionada]['texto'].toString()),
-                  ...respostas.map((t) => Resposta(t, responder)).toList(),
-                ],
-              )
-            : const Center(
-                child: Text(
-                  'Parabéns!',
-                  style: TextStyle(fontSize: 28),
-                ),
-              ),
+            ? Questionario(perguntas: _perguntas, perguntaSelecionada: _perguntaSelecionada, quandoResponder: _responder)
+            : Resultado('Parabéns'),
       ),
     );
   }
